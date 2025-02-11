@@ -1,94 +1,180 @@
 import { useFormik } from "formik"
 import "./App.css"
+import { WordInput } from "./WordInput"
 
-const titles = [
-  "the great gemstone journey general",
-  "adventure in the amazon jungle general",
-  "the wild adventure general",
-  "the cook off kids",
-  "the birthday plan general",
-  "a wedding to remember holiday",
-  "nora's going away bash general",
-  "the miner general",
-  "a rainy day general",
-  "the princess adventure"
+const topics = [
+  "the great gemstone journey",
+  "adventure in the amazon jungle",
+  "the wild adventure",
+  "the cook off",
+  "the birthday plan",
+  "a wedding to remember",
+  "nora's going away bash",
+  "the miner",
+  "a rainy day",
+  "the princess"
 ]
 
 const buttonColors = ["#fe7338", "#2da343", "#203f92", "#ad46b5", "#ec2a2a"]
 
 function App() {
   const form = useFormik({
-    noun: "",
-    verb: "",
-    adverb: ""
+    initialValues: {
+      noun: "",
+      verb: "",
+      adjective: "",
+      topic: ""
+    },
+    onSubmit: async (data, submitProps) => {
+      const response = await fetch("http://localhost:3000/mad-libs", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      const json = await response.json()
+
+      console.log(json)
+      submitProps.setStatus(submitProps.text)
+    }
   })
 
   return (
-    <div>
-      <h1 className="text-[3rem] text-center my-4">
+    <form
+      onSubmit={form.handleSubmit}
+      className="max-w-[90rem] mx-auto font-boogallo"
+    >
+      <h1 className="text-[4rem] text-center my-4">
         <span className="font-bold">Mad</span> Libs!
       </h1>
       <section>
-        <h2 className="uppercase text-center text-xl">Choose a story</h2>
+        <h2 className="uppercase text-center text-2xl">Choose a story</h2>
         <div className="grid gap-1 grid-cols-4 my-8">
-          {titles.map((title, titleIndex) => {
+          {topics.map((topic, titleIndex) => {
             return (
               <button
+                type="button"
                 style={{
                   backgroundColor:
                     buttonColors[titleIndex % buttonColors.length]
                 }}
-                className="font-bold rounded-sm cursor-pointer uppercase min-h-32 p-4 text-white"
-                key={title}
+                onClick={() => form.setFieldValue("topic", topic)}
+                className="rounded-sm text-xl cursor-pointer uppercase min-h-32 p-4 text-white"
+                key={topic}
               >
-                {title}
+                {topic}
               </button>
             )
           })}
         </div>
       </section>
-      <section style={{ backgroundColor: buttonColors[1] }} className="p-4">
-        <h2 className="text-xl text-center text-white">
-          Go Mad! Fill in the blank fields below.
+      <section
+        style={{ backgroundColor: buttonColors[1] }}
+        className="p-4 rounded-sm"
+      >
+        <h2 className="text-2xl uppercase text-center text-white">
+          Go Mad! Fill in the blank fields below
         </h2>
-        <p className="text-center text-gray-100 my-2">
-          If you cant think of a word, click icon to randomly pick a verb, noun,
-          adjective or adverb.
-        </p>
-        <div className="grid grid-cols-4 gap-4 mt-8">
-          <div className="bg-white flex flex-col">
-            <input
-              placeholder="Enter a noun"
-              className="p-3 text-xl"
-              type="text"
-              id="noun"
-            />
-            <label
-              style={{ color: buttonColors[1] }}
-              className="p-1 border-t-1 font-bold text-center uppercase"
-              htmlFor="noun"
-            >
-              Noun
-            </label>
-          </div>
-          <div className="bg-white flex flex-col">
-            <input
-              placeholder="Enter a verb"
-              className="p-3 text-xl"
-              type="text"
-              id="verb"
-            />
-            <label
-              style={{ color: buttonColors[1] }}
-              className="p-1 border-t-1 font-bold text-center uppercase"
-              htmlFor="verb"
-            >
-              Verb
-            </label>
-          </div>
+        <div className="grid grid-cols-4 gap-4 mt-4">
+          <WordInput
+            placeholder="Enter a verb"
+            label="Verb"
+            name="verb"
+            handleChange={form.handleChange}
+          />
+          <WordInput
+            placeholder="Enter a noun"
+            label="Verb"
+            name="noun"
+            handleChange={form.handleChange}
+          />
+          <WordInput
+            placeholder="Enter a adjective"
+            label="Verb"
+            name="adjective"
+            handleChange={form.handleChange}
+          />
         </div>
       </section>
-    </div>
+      <button
+        type="submit"
+        className="uppercase block mx-auto my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2"
+      >
+        go mad!
+      </button>
+      <section>
+        <h2 className="text-3xl uppercase text-center my-4">The Cook Off</h2>
+        <p className="text-white tracking-wide bg-purple-500 p-4 text-2xl max-w-[80ch] mx-auto">
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            adipisicing
+          </span>{" "}
+          elit. Omnis consectetur{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            officiis
+          </span>{" "}
+          maiores consequuntur aperiam quaerat a nisi, eum nihil ut quia dicta{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            laudantium
+          </span>{" "}
+          cupiditate{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            facilis
+          </span>{" "}
+          cumque non{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            pariatur
+          </span>{" "}
+          laborum fuga. Lorem ipsum dolor sit amet consectetur,{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            adipisicing
+          </span>{" "}
+          elit. Omnis consectetur{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            officiis
+          </span>{" "}
+          maiores consequuntur aperiam quaerat a nisi, eum nihil ut quia dicta{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            laudantium
+          </span>{" "}
+          cupiditate{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            facilis
+          </span>{" "}
+          cumque non{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            pariatur
+          </span>{" "}
+          laborum fuga.
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            adipisicing
+          </span>{" "}
+          elit. Omnis consectetur{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            officiis
+          </span>{" "}
+          maiores consequuntur aperiam quaerat a nisi, eum nihil ut quia dicta{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            laudantium
+          </span>{" "}
+          cupiditate{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            facilis
+          </span>{" "}
+          cumque non{" "}
+          <span className="text-purple-500 px-2 my-1 bg-white inline-block">
+            pariatur
+          </span>{" "}
+          laborum fuga.
+        </p>
+      </section>
+      <button
+        type="button"
+        className="uppercase block mx-auto my-4 min-w-40 rounded-sm cursor-pointer bg-green-500 text-white px-4 py-2"
+      >
+        Try again!
+      </button>
+    </form>
   )
 }
 
