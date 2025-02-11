@@ -4,16 +4,17 @@ import { WordInput } from "./WordInput"
 import { useState } from "react"
 
 const topics = [
-  "the great gemstone journey",
-  "adventure in the amazon jungle",
-  "the wild adventure",
-  "the cook off",
-  "the birthday plan",
-  "a wedding to remember",
-  "nora's going away bash",
-  "the miner",
-  "a rainy day",
-  "the princess"
+  "The weirdest Day at School",
+  "Adventure in the amazon jungle",
+  "Fantasy and Imagination",
+  "The birthday plan",
+  "A rainy day",
+  "The princess",
+  "Cooking show",
+  "A Haunted House Visit",
+  "My Superpower",
+  "The Movie Premiere",
+  "The Day Everything Went Backward"
 ]
 
 const buttonColors = ["#fe7338", "#2da343", "#203f92", "#ad46b5", "#ec2a2a"]
@@ -25,7 +26,10 @@ function App() {
       noun: "",
       verb: "",
       adjective: "",
-      topic: ""
+      topic: "",
+      place: "",
+      emotion: "",
+      name: ""
     },
     onSubmit: async (data, submitProps) => {
       const response = await fetch("http://localhost:3000/mad-libs", {
@@ -65,7 +69,7 @@ function App() {
                       buttonColors[titleIndex % buttonColors.length]
                   }}
                   onClick={() => form.setFieldValue("topic", topic)}
-                  className="rounded-sm text-xl cursor-pointer uppercase min-h-32 p-4 text-white"
+                  className="rounded-sm text-xl cursor-pointer uppercase min-h-24 p-4 text-white"
                   key={topic}
                 >
                   {topic}
@@ -74,6 +78,7 @@ function App() {
             })}
           </div>
         </section>
+        <div className="w-20 border-dashed border-gray-500 border-t-4 mx-auto my-8"></div>
         <section
           style={{ backgroundColor: buttonColors[1] }}
           className="p-4 rounded-sm"
@@ -97,14 +102,43 @@ function App() {
               name="adjective"
               handleChange={form.handleChange}
             />
+            <WordInput
+              placeholder="Enter a place"
+              name="place"
+              handleChange={form.handleChange}
+            />
+            <WordInput
+              placeholder="Enter an emotion"
+              name="emotion"
+              handleChange={form.handleChange}
+            />
+            <WordInput
+              placeholder="Enter a name"
+              name="name"
+              handleChange={form.handleChange}
+            />
           </div>
         </section>
-        <button
-          type="submit"
-          className="uppercase block mx-auto my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2"
-        >
-          go mad!
-        </button>
+        <div className="flex gap-4 justify-center my-4">
+          {/* <button
+            type="button"
+            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2"
+          >
+            clear
+          </button>
+          <button
+            type="button"
+            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-blue-500 text-white px-4 py-2"
+          >
+            fill randomly
+          </button> */}
+          <button
+            type="submit"
+            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2"
+          >
+            create!
+          </button>
+        </div>
       </form>
     )
   }
@@ -115,7 +149,9 @@ function App() {
         <span className="font-bold">Mad</span> Libs!
       </h1>
       <section>
-        <h2 className="text-3xl uppercase text-center my-4">{form.values.topic}</h2>
+        <h2 className="text-3xl uppercase text-center my-4">
+          {form.values.topic}
+        </h2>
         <p className="text-white rounded-sm tracking-wide bg-purple-500 p-4 text-2xl max-w-[80ch] mx-auto">
           {form.status?.split(/(\{.*?\})/).map((word, index) => {
             if (word.startsWith("{"))
