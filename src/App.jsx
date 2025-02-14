@@ -2,6 +2,8 @@ import { useFormik } from "formik"
 import "./App.css"
 import { WordInput } from "./WordInput"
 import { useState } from "react"
+import { string, object } from "yup"
+import clsx from "clsx"
 
 const topics = [
   "The weirdest Day at School",
@@ -31,6 +33,15 @@ function App() {
       emotion: "",
       name: ""
     },
+    validationSchema: object({
+      noun: string().min(3).max(20).required(),
+      verb: string().min(3).max(20).required(),
+      adjective: string().min(3).max(20).required(),
+      topic: string().oneOf(topics).required(),
+      place: string().min(3).max(20).required(),
+      emotion: string().min(3).max(15).required(),
+      name: string().min(3).max(20).required()
+    }),
     onSubmit: async (data, submitProps) => {
       const response = await fetch("http://localhost:3000/mad-libs", {
         method: "POST",
@@ -59,7 +70,7 @@ function App() {
         </h1>
         <section>
           <h2 className="uppercase text-center text-2xl">Choose a story</h2>
-          <div className="grid gap-1 grid-cols-4 my-8">
+          <div className="grid gap-1 sm:grid-cols-2 md:grid-cols-4 my-8">
             {topics.map((topic, titleIndex) => {
               return (
                 <button
@@ -69,10 +80,10 @@ function App() {
                       buttonColors[titleIndex % buttonColors.length]
                   }}
                   onClick={() => form.setFieldValue("topic", topic)}
-                  className="rounded-sm text-xl cursor-pointer uppercase min-h-24 p-4 text-white"
+                  className="rounded-sm text-xl cursor-pointer uppercase min-h-24 p-4 text-white hover:opacity-85 flex gap-2 items-center flex-col justify-center"
                   key={topic}
                 >
-                  {topic}
+                  <span>{topic}</span>
                 </button>
               )
             })}
@@ -86,7 +97,7 @@ function App() {
           <h2 className="text-2xl uppercase text-center text-white">
             Go Mad! Fill in the blank fields below
           </h2>
-          <div className="grid grid-cols-4 gap-4 mt-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <WordInput
               placeholder="Enter a verb"
               name="verb"
@@ -98,7 +109,7 @@ function App() {
               handleChange={form.handleChange}
             />
             <WordInput
-              placeholder="Enter a adjective"
+              placeholder="Enter an adjective"
               name="adjective"
               handleChange={form.handleChange}
             />
@@ -120,23 +131,12 @@ function App() {
           </div>
         </section>
         <div className="flex gap-4 justify-center my-4">
-          {/* <button
-            type="button"
-            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2"
-          >
-            clear
-          </button>
           <button
-            type="button"
-            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-blue-500 text-white px-4 py-2"
-          >
-            fill randomly
-          </button> */}
-          <button
+            disabled={form.isSubmitting}
             type="submit"
-            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2"
+            className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2 disabled:bg-red-400 disabled:cursor-not-allowed"
           >
-            create!
+            {form.isSubmitting ? "loading..." : "create!"}
           </button>
         </div>
       </form>
