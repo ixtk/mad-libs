@@ -206,7 +206,10 @@ function App() {
       </section>
       <button
         type="button"
-        onClick={() => setGameState("idle")}
+        onClick={() => {
+          setGameState("idle")
+          form.resetForm()
+        }}
         className="uppercase block mx-auto my-4 min-w-40 rounded-sm cursor-pointer bg-green-500 text-white px-4 py-2"
       >
         Try again!
