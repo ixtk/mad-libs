@@ -43,19 +43,26 @@ function App() {
       name: string().min(3).max(20).required()
     }),
     onSubmit: async (data, submitProps) => {
-      const response = await fetch("http://localhost:3000/mad-libs", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      const json = await response.json()
+      submitProps.setStatus({})
+      try {
+        const response = await fetch("https://api.abcd.ge/mad-libs", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
 
-      console.log(json)
-      submitProps.setStatus(json.text)
-      submitProps.setSubmitting(false)
-      setGameState("generated")
+        const json = await response.json()
+        if (!response.ok) {
+          throw new Error(json.error)
+        }
+
+        submitProps.setStatus({ result: json.text })
+        setGameState("generated")
+      } catch (error) {
+        submitProps.setStatus({ error: error.message })
+      }
     }
   })
 
@@ -70,7 +77,7 @@ function App() {
         </h1>
         <section>
           <h2 className="uppercase text-center text-2xl">Choose a story</h2>
-          <div className="grid gap-1 sm:grid-cols-2 md:grid-cols-4 my-8">
+          <div className="grid gap-1 sm:grid-cols-2 md:grid-cols-4 mt-8">
             {topics.map((topic, titleIndex) => {
               return (
                 <button
@@ -80,13 +87,19 @@ function App() {
                       buttonColors[titleIndex % buttonColors.length]
                   }}
                   onClick={() => form.setFieldValue("topic", topic)}
-                  className="rounded-sm text-xl cursor-pointer uppercase min-h-24 p-4 text-white hover:opacity-85 flex gap-2 items-center flex-col justify-center"
+                  className={clsx(
+                    "rounded-sm text-xl cursor-pointer uppercase min-h-24 p-4 text-white hover:opacity-85 flex gap-2 items-center flex-col justify-center",
+                    topic === form.values.topic && "underline"
+                  )}
                   key={topic}
                 >
                   <span>{topic}</span>
                 </button>
               )
             })}
+          </div>
+          <div className="text-red-500 px-3 bg-white mt-4 font-sans font-medium text-sm">
+            {form.touched.topic && form.errors.topic}
           </div>
         </section>
         <div className="w-20 border-dashed border-gray-500 border-t-4 mx-auto my-8"></div>
@@ -97,36 +110,59 @@ function App() {
           <h2 className="text-2xl uppercase text-center text-white">
             Go Mad! Fill in the blank fields below
           </h2>
+          {form.status?.error && (
+            <p className="text-center bg-white text-red-500 rounded-sm p-1 mt-4 font-sans font-medium text-sm max-w-[50ch] mx-auto">
+              {form.status.error}
+            </p>
+          )}
           <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <WordInput
               placeholder="Enter a verb"
               name="verb"
               handleChange={form.handleChange}
+              handleBlur={form.handleBlur}
+              errors={form.errors}
+              touched={form.touched}
             />
             <WordInput
               placeholder="Enter a noun"
               name="noun"
               handleChange={form.handleChange}
+              handleBlur={form.handleBlur}
+              errors={form.errors}
+              touched={form.touched}
             />
             <WordInput
               placeholder="Enter an adjective"
               name="adjective"
               handleChange={form.handleChange}
+              handleBlur={form.handleBlur}
+              errors={form.errors}
+              touched={form.touched}
             />
             <WordInput
               placeholder="Enter a place"
               name="place"
               handleChange={form.handleChange}
+              handleBlur={form.handleBlur}
+              errors={form.errors}
+              touched={form.touched}
             />
             <WordInput
               placeholder="Enter an emotion"
               name="emotion"
               handleChange={form.handleChange}
+              handleBlur={form.handleBlur}
+              errors={form.errors}
+              touched={form.touched}
             />
             <WordInput
               placeholder="Enter a name"
               name="name"
               handleChange={form.handleChange}
+              handleBlur={form.handleBlur}
+              errors={form.errors}
+              touched={form.touched}
             />
           </div>
         </section>
@@ -153,7 +189,7 @@ function App() {
           {form.values.topic}
         </h2>
         <p className="text-white rounded-sm tracking-wide bg-purple-500 p-4 text-2xl max-w-[80ch] mx-auto">
-          {form.status?.split(/(\{.*?\})/).map((word, index) => {
+          {form?.status?.result?.split(/(\{.*?\})/).map((word, index) => {
             if (word.startsWith("{"))
               return (
                 <span
