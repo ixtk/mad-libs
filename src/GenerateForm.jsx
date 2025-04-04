@@ -1,9 +1,40 @@
+import { useRef, useState } from "react"
 import { WordInput } from "./WordInput"
 import topics from "./topics.json"
 import clsx from "clsx"
+import { useEffect } from "react"
 
 export const GenerateForm = ({ form }) => {
   const buttonColors = ["#fe7338", "#2da343", "#203f92", "#ad46b5", "#ec2a2a"]
+  const [btnText, setBtnText] = useState("")
+  const stepIndexRef = useRef(0)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (!form.isSubmitting) {
+        clearInterval(intervalId)
+        setBtnText("")
+      }
+
+      switch (stepIndexRef.current) {
+        case 1:
+          setBtnText("Server waking up... 🥱")
+          break
+        case 5:
+          setBtnText("Still loading... 🙄")
+          break
+        case 9:
+          setBtnText("Just a little more... 🥺🙏")
+          clearInterval(intervalId)
+      }
+      stepIndexRef.current += 1
+    }, 2000)
+
+    return () => {
+      clearInterval(intervalId)
+      setBtnText("")
+    }
+  }, [form.isSubmitting])
 
   const topicButtons = topics.map((topic, titleIndex) => {
     return (
@@ -85,7 +116,7 @@ export const GenerateForm = ({ form }) => {
           type="submit"
           className="uppercase my-4 min-w-40 rounded-sm cursor-pointer bg-red-500 text-white px-4 py-2 disabled:bg-red-400 disabled:cursor-not-allowed"
         >
-          {form.isSubmitting ? "loading..." : "create!"}
+          {form.isSubmitting ? btnText || "loading..." : "create!"}
         </button>
       </div>
     </form>

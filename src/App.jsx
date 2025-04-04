@@ -32,6 +32,7 @@ function App() {
 
   const formHandleSubmit = async (data, submitProps) => {
     submitProps.setStatus({})
+    // await fetch("https://httpbin.dev/delay/15")
     try {
       const response = await fetch("https://api.abcd.ge/mad-libs", {
         method: "POST",
