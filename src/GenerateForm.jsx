@@ -78,6 +78,7 @@ export const GenerateForm = ({ form }) => {
 
   return (
     <form
+      autocomplete="off"
       onSubmit={form.handleSubmit}
       className="max-w-[90rem] mx-auto font-boogallo"
     >
